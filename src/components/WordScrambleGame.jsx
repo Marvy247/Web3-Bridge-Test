@@ -100,7 +100,7 @@ function WordScrambleGame() {
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-lg border border-gray-200">
+    <div className="max-w-md mx-auto mt-40 p-6 bg-white rounded-lg shadow-lg border border-gray-200">
       <h2 className="text-4xl font-bold mb-4 text-blue-600">Word Scramble Game</h2>
       <p className="text-xl mb-2">Score: <span className="font-semibold">{score}</span></p>
       <p className="text-xl mb-2">Time Left: <span className="font-semibold">{timeLeft}s</span></p>
