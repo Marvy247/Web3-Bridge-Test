@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import WordSelection from './WordSelection';
+import GuessInput from './GuessInput';
 
 // Utility function to shuffle letters of a word
 function shuffleWord(word) {
@@ -14,9 +15,9 @@ function shuffleWord(word) {
 function WordScrambleGame() {
   const [currentWordObj, setCurrentWordObj] = useState(null);
   const [scrambledWord, setScrambledWord] = useState('');
-  const [guess, setGuess] = useState('');
   const [feedback, setFeedback] = useState('');
   const [showHint, setShowHint] = useState(false);
+  const [guessDisabled, setGuessDisabled] = useState(false);
 
   useEffect(() => {
     if (!currentWordObj) {
@@ -25,23 +26,15 @@ function WordScrambleGame() {
       return;
     }
     setScrambledWord(shuffleWord(currentWordObj.word));
-    setGuess('');
     setFeedback('');
     setShowHint(false);
+    setGuessDisabled(false);
   }, [currentWordObj]);
 
-  const handleGuessChange = (e) => {
-    setGuess(e.target.value);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!guess.trim()) {
-      setFeedback('Please enter a non-empty guess.');
-      return;
-    }
-    if (guess.trim().toLowerCase() === currentWordObj.word.toLowerCase()) {
+  const handleGuess = (guess) => {
+    if (guess.toLowerCase() === currentWordObj.word.toLowerCase()) {
       setFeedback('Correct! Click "Next Word" to continue.');
+      setGuessDisabled(true);
     } else {
       setFeedback('Incorrect, try again.');
     }
@@ -56,21 +49,7 @@ function WordScrambleGame() {
       <h2 className="text-3xl font-bold mb-4">Word Scramble Game</h2>
       <p className="text-2xl mb-2">Scrambled Word:</p>
       <p className="text-4xl font-mono mb-4">{scrambledWord}</p>
-      <form onSubmit={handleSubmit} className="mb-4">
-        <input
-          type="text"
-          value={guess}
-          onChange={handleGuessChange}
-          placeholder="Enter your guess"
-          className="border p-2 rounded w-full text-center"
-        />
-        <button
-          type="submit"
-          className="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
-          Guess
-        </button>
-      </form>
+      <GuessInput onGuess={handleGuess} disabled={guessDisabled} />
       <button
         onClick={toggleHint}
         className="mb-4 text-sm text-blue-700 underline"
