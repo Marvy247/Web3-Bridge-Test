@@ -32,7 +32,8 @@ function WordScrambleGame() {
       setTimerActive(false);
       return;
     }
-    setScrambledWord(shuffleWord(currentWordObj.word));
+    const scrambled = shuffleWord(currentWordObj.word);
+    setScrambledWord(scrambled);
     setFeedback('');
     setShowHint(false);
     setGuessDisabled(false);
@@ -41,7 +42,6 @@ function WordScrambleGame() {
   }, [currentWordObj]);
 
   useEffect(() => {
-    // Increase difficulty every 5 correct guesses
     const newDifficulty = Math.min(3, Math.floor(score / 50) + 1);
     if (newDifficulty !== difficulty) {
       setDifficulty(newDifficulty);
@@ -85,8 +85,7 @@ function WordScrambleGame() {
     }
   };
 
-  // Enhanced hint system: limit number of hints per game and disable after 3 uses
-  const [hintCount, setHintCount] = React.useState(0);
+  const [hintCount, setHintCount] = useState(0);
   const maxHints = 3;
 
   const handleToggleHint = () => {
@@ -101,16 +100,16 @@ function WordScrambleGame() {
   };
 
   return (
-    <div className="max-w-md mx-auto p-4 text-center">
-      <h2 className="text-3xl font-bold mb-4">Word Scramble Game</h2>
-      <p className="text-xl mb-2">Score: {score}</p>
-      <p className="text-xl mb-2">Time Left: {timeLeft}s</p>
+    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-lg border border-gray-200">
+      <h2 className="text-4xl font-bold mb-4 text-blue-600">Word Scramble Game</h2>
+      <p className="text-xl mb-2">Score: <span className="font-semibold">{score}</span></p>
+      <p className="text-xl mb-2">Time Left: <span className="font-semibold">{timeLeft}s</span></p>
       <p className="text-2xl mb-2">Scrambled Word:</p>
-      <p className="text-4xl font-mono mb-4">{scrambledWord}</p>
+      <p className="text-5xl font-mono mb-4 text-gray-800">{scrambledWord}</p>
       <GuessInput onGuess={handleGuess} disabled={guessDisabled} />
       <button
         onClick={handleToggleHint}
-        className="mb-4 text-sm text-blue-700 underline"
+        className={`mb-4 text-sm ${showHint ? 'text-red-600' : 'text-blue-700'} underline`}
         disabled={hintCount >= maxHints && !showHint}
       >
         {showHint ? 'Hide Hint' : 'Show Hint'}
@@ -118,10 +117,10 @@ function WordScrambleGame() {
       {showHint && currentWordObj && (
         <p className="italic text-gray-700 mb-4">{currentWordObj.hint}</p>
       )}
-      {feedback && <p className="font-semibold">{feedback}</p>}
+      {feedback && <p className="font-semibold text-red-500">{feedback}</p>}
       <button
         onClick={handleNextWord}
-        className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+        className={`bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-200 ${!guessDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
         disabled={!guessDisabled}
       >
         Next Word

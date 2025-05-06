@@ -1,10 +1,9 @@
+import WordScrambleGame from './components/WordScrambleGame';
+
 function App() {
   return (
-  
-      <div className="text-6xl font-bold underline" >
-        <h1>My REACT Template</h1>
-      </div>     
-  )
+    <WordScrambleGame />
+  );
 }
 
-export default App
+export default App;
