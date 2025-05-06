@@ -19,6 +19,7 @@ function WordScrambleGame() {
   const [showHint, setShowHint] = useState(false);
   const [guessDisabled, setGuessDisabled] = useState(false);
   const [score, setScore] = useState(0);
+  const [difficulty, setDifficulty] = useState(1);
 
   const wordSelectionRef = useRef();
 
@@ -33,6 +34,17 @@ function WordScrambleGame() {
     setShowHint(false);
     setGuessDisabled(false);
   }, [currentWordObj]);
+
+  useEffect(() => {
+    // Increase difficulty every 5 correct guesses
+    const newDifficulty = Math.min(3, Math.floor(score / 50) + 1);
+    if (newDifficulty !== difficulty) {
+      setDifficulty(newDifficulty);
+      if (wordSelectionRef.current) {
+        wordSelectionRef.current.setDifficulty(newDifficulty);
+      }
+    }
+  }, [score, difficulty]);
 
   const handleGuess = (guess) => {
     if (guess.toLowerCase() === currentWordObj.word.toLowerCase()) {
