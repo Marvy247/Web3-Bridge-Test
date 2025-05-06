@@ -52,6 +52,21 @@ function WordScrambleGame() {
     setShowHint((prev) => !prev);
   };
 
+  // Enhanced hint system: limit number of hints per game and disable after 3 uses
+  const [hintCount, setHintCount] = React.useState(0);
+  const maxHints = 3;
+
+  const handleToggleHint = () => {
+    if (!showHint && hintCount >= maxHints) {
+      setFeedback('No more hints available.');
+      return;
+    }
+    if (!showHint) {
+      setHintCount(hintCount + 1);
+    }
+    setShowHint(!showHint);
+  };
+
   return (
     <div className="max-w-md mx-auto p-4 text-center">
       <h2 className="text-3xl font-bold mb-4">Word Scramble Game</h2>
@@ -59,8 +74,9 @@ function WordScrambleGame() {
       <p className="text-4xl font-mono mb-4">{scrambledWord}</p>
       <GuessInput onGuess={handleGuess} disabled={guessDisabled} />
       <button
-        onClick={toggleHint}
+        onClick={handleToggleHint}
         className="mb-4 text-sm text-blue-700 underline"
+        disabled={hintCount >= maxHints && !showHint}
       >
         {showHint ? 'Hide Hint' : 'Show Hint'}
       </button>
