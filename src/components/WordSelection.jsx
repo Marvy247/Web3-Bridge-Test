@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useImperativeHandle, forwardRef } from 'react';
 
 const wordList = [
   { word: 'apple', hint: 'A common fruit' },
@@ -13,7 +13,7 @@ const wordList = [
   { word: 'forest', hint: 'Large area covered chiefly with trees' }
 ];
 
-function WordSelection({ onWordSelected }) {
+const WordSelection = forwardRef(({ onWordSelected }, ref) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
@@ -24,18 +24,14 @@ function WordSelection({ onWordSelected }) {
     onWordSelected(wordList[currentIndex]);
   }, [currentIndex, onWordSelected]);
 
-  const nextWord = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % wordList.length);
-  };
+  useImperativeHandle(ref, () => ({
+    nextWord() {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % wordList.length);
+    }
+  }));
 
-  return (
-    <div>
-      <button onClick={nextWord} className="bg-blue-500 text-white px-4 py-2 rounded">
-        Next Word
-      </button>
-    </div>
-  );
-}
+  return null; // No UI needed here now
+});
 
 export { wordList };
 export default WordSelection;

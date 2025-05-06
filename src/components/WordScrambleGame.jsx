@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import WordSelection from './WordSelection';
 import GuessInput from './GuessInput';
 
@@ -19,6 +19,8 @@ function WordScrambleGame() {
   const [showHint, setShowHint] = useState(false);
   const [guessDisabled, setGuessDisabled] = useState(false);
 
+  const wordSelectionRef = useRef();
+
   useEffect(() => {
     if (!currentWordObj) {
       setScrambledWord('');
@@ -37,6 +39,12 @@ function WordScrambleGame() {
       setGuessDisabled(true);
     } else {
       setFeedback('Incorrect, try again.');
+    }
+  };
+
+  const handleNextWord = () => {
+    if (wordSelectionRef.current) {
+      wordSelectionRef.current.nextWord();
     }
   };
 
@@ -60,7 +68,14 @@ function WordScrambleGame() {
         <p className="italic text-gray-700 mb-4">{currentWordObj.hint}</p>
       )}
       {feedback && <p className="font-semibold">{feedback}</p>}
-      <WordSelection onWordSelected={setCurrentWordObj} />
+      <button
+        onClick={handleNextWord}
+        className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+        disabled={!guessDisabled}
+      >
+        Next Word
+      </button>
+      <WordSelection ref={wordSelectionRef} onWordSelected={setCurrentWordObj} />
     </div>
   );
 }
