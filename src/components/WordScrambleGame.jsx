@@ -19,6 +19,9 @@ function WordScrambleGame() {
   const [showHint, setShowHint] = useState(false);
   const [guessDisabled, setGuessDisabled] = useState(false);
   const [score, setScore] = useState(0);
+  const [difficulty, setDifficulty] = useState(1);
+  const [timeLeft, setTimeLeft] = useState(30);
+  const [timerActive, setTimerActive] = useState(false);
 
   const wordSelectionRef = useRef();
 
@@ -26,18 +29,50 @@ function WordScrambleGame() {
     if (!currentWordObj) {
       setScrambledWord('');
       setFeedback('No valid words available.');
+      setTimerActive(false);
       return;
     }
     setScrambledWord(shuffleWord(currentWordObj.word));
     setFeedback('');
     setShowHint(false);
     setGuessDisabled(false);
+    setTimeLeft(30);
+    setTimerActive(true);
   }, [currentWordObj]);
+
+  useEffect(() => {
+    // Increase difficulty every 5 correct guesses
+    const newDifficulty = Math.min(3, Math.floor(score / 50) + 1);
+    if (newDifficulty !== difficulty) {
+      setDifficulty(newDifficulty);
+      if (wordSelectionRef.current) {
+        wordSelectionRef.current.setDifficulty(newDifficulty);
+      }
+    }
+  }, [score, difficulty]);
+
+  useEffect(() => {
+    if (!timerActive) return;
+
+    if (timeLeft === 0) {
+      setFeedback('Time is up! Click "Next Word" to continue.');
+      setGuessDisabled(true);
+      setTimerActive(false);
+      return;
+    }
+
+    const timerId = setTimeout(() => {
+      setTimeLeft(timeLeft - 1);
+    }, 1000);
+
+    return () => clearTimeout(timerId);
+  }, [timeLeft, timerActive]);
 
   const handleGuess = (guess) => {
     if (guess.toLowerCase() === currentWordObj.word.toLowerCase()) {
       setFeedback('Correct! Click "Next Word" to continue.');
       setGuessDisabled(true);
+      setTimerActive(false);
       setScore((prevScore) => prevScore + 10);
     } else {
       setFeedback('Incorrect, try again.');
@@ -69,6 +104,7 @@ function WordScrambleGame() {
     <div className="max-w-md mx-auto p-4 text-center">
       <h2 className="text-3xl font-bold mb-4">Word Scramble Game</h2>
       <p className="text-xl mb-2">Score: {score}</p>
+      <p className="text-xl mb-2">Time Left: {timeLeft}s</p>
       <p className="text-2xl mb-2">Scrambled Word:</p>
       <p className="text-4xl font-mono mb-4">{scrambledWord}</p>
       <GuessInput onGuess={handleGuess} disabled={guessDisabled} />
