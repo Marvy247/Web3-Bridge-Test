@@ -18,6 +18,7 @@ function WordScrambleGame() {
   const [feedback, setFeedback] = useState('');
   const [showHint, setShowHint] = useState(false);
   const [guessDisabled, setGuessDisabled] = useState(false);
+  const [score, setScore] = useState(0);
 
   const wordSelectionRef = useRef();
 
@@ -37,6 +38,7 @@ function WordScrambleGame() {
     if (guess.toLowerCase() === currentWordObj.word.toLowerCase()) {
       setFeedback('Correct! Click "Next Word" to continue.');
       setGuessDisabled(true);
+      setScore((prevScore) => prevScore + 10);
     } else {
       setFeedback('Incorrect, try again.');
     }
@@ -46,10 +48,6 @@ function WordScrambleGame() {
     if (wordSelectionRef.current) {
       wordSelectionRef.current.nextWord();
     }
-  };
-
-  const toggleHint = () => {
-    setShowHint((prev) => !prev);
   };
 
   // Enhanced hint system: limit number of hints per game and disable after 3 uses
@@ -70,6 +68,7 @@ function WordScrambleGame() {
   return (
     <div className="max-w-md mx-auto p-4 text-center">
       <h2 className="text-3xl font-bold mb-4">Word Scramble Game</h2>
+      <p className="text-xl mb-2">Score: {score}</p>
       <p className="text-2xl mb-2">Scrambled Word:</p>
       <p className="text-4xl font-mono mb-4">{scrambledWord}</p>
       <GuessInput onGuess={handleGuess} disabled={guessDisabled} />
